@@ -59,8 +59,33 @@
   []
   (map (comp make-cmd str/trim) (split-commas read-input-file)))
 
+(defn abs [n] (max n (- n)))
+
+(defn total-distance
+  [state]
+  (+ (abs (:xDist state)) (abs (:yDist state))))
+
 (defn -main
   [& args]
-  (navigate origin (get-input)))
+  (total-distance (navigate origin (get-input))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
