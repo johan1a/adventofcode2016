@@ -1,0 +1,13 @@
+*/target
+*/classes
+*/checkouts
+*/*pom.xml
+*/*pom.xml.asc
+*/*.jar
+*/*.class
+*/*.lein-*
+*/*.nrepl-port
+*/*.hgignore
+*/*.hg/
+day1/src/day1/.core.clj.swp
+*.swp

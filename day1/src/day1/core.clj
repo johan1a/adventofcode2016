@@ -20,8 +20,8 @@
 (def walk
   {:north (fn [d s] (update s :yDist #(+ d %)))
    :east (fn [d s] (update s :xDist #(+ d %)))
-   :south (fn [d s] (update s :yDist #(- d %)))
-   :west (fn [d s] (update s :xDist #(- d %)))})
+   :south (fn [d s] (update s :yDist #(- % d)))
+   :west (fn [d s] (update s :xDist #(- % d)))})
 
 (defn turn
   [state turn-dir]
@@ -55,9 +55,9 @@
    :dist (Integer/parseInt (apply str (rest lit)))
   })
 
-(defn get-input
-  []
-  (map (comp make-cmd str/trim) (split-commas read-input-file)))
+(defn make-input
+  [raw-input]
+  (map (comp make-cmd str/trim) (split-commas raw-input)))
 
 (defn abs [n] (max n (- n)))
 
@@ -65,9 +65,13 @@
   [state]
   (+ (abs (:xDist state)) (abs (:yDist state))))
 
+(defn follow-map
+  [raw-input]
+  (navigate origin (make-input raw-input)))
+
 (defn -main
   [& args]
-  (total-distance (navigate origin (get-input))))
+  (total-distance (follow-map read-input-file)))
 
 
 
