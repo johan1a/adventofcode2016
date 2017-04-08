@@ -9,5 +9,4 @@
 */*.nrepl-port
 */*.hgignore
 */*.hg/
-day1/src/day1/.core.clj.swp
 *.swp
