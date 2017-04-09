@@ -89,10 +89,6 @@
   [raw-input]
   (navigate origin (make-input raw-input)))
 
-(defn first-duplicate2
-  [checked [v & vv]]
-  v)
-
 (defn first-duplicate
   [checked [v & vv]]
   (if (contains? checked v)
