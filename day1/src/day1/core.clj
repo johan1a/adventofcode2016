@@ -2,10 +2,16 @@
   (:gen-class))
 (require '[clojure.string :as str])
 
+(defn to-pos
+  [state]
+  {:xPos (:xPos state) :yPos (:yPos state)})
+
 (def origin 
   {:direction :north
-   :xDist 0
-   :yDist 0})
+   :xPos 0
+   :yPos 0
+   :visited [{:xPos 0 :yPos 0} ]
+   })
 
 (def new-dir
   {:north {"R" :east
@@ -17,11 +23,24 @@
    :west {"R" :north
           "L" :south}})
 
-(def walk
-  {:north (fn [d s] (update s :yDist #(+ d %)))
-   :east (fn [d s] (update s :xDist #(+ d %)))
-   :south (fn [d s] (update s :yDist #(- % d)))
-   :west (fn [d s] (update s :xDist #(- % d)))})
+(def move-one
+  {:north (fn [s] (update s :yPos #(+ 1 %)))
+   :east (fn [s] (update s :xPos #(+ 1 %)))
+   :south (fn [s] (update s :yPos #(- % 1)))
+   :west (fn [s] (update s :xPos #(- % 1)))})
+
+(defn mark-visited
+  [state]
+  (def cur-pos (to-pos state))
+  (update state :visited #(conj % cur-pos)))
+
+(defn walk
+  [dir dist state]
+  (if (== dist 0)
+    state
+    ((def moved ((move-one dir) state))
+     (def marked (mark-visited moved))
+     (walk dir (- dist 1) marked))))
 
 (defn turn
   [state turn-dir]
@@ -30,7 +49,8 @@
 (defn turn-and-walk
   [turn-dir dist state]
   (def turned-state (turn state turn-dir))
-  ((walk (:direction turned-state)) dist turned-state))
+  (def moved-state (walk (:direction turned-state) dist turned-state))
+  moved-state)
 
 (defn move
   [state cmd]
@@ -63,11 +83,36 @@
 
 (defn total-distance
   [state]
-  (+ (abs (:xDist state)) (abs (:yDist state))))
+  (+ (abs (:xPos state)) (abs (:yPos state))))
 
 (defn follow-map
   [raw-input]
   (navigate origin (make-input raw-input)))
+
+(defn first-duplicate2
+  [checked [v & vv]]
+  v)
+
+(defn first-duplicate3
+  [checked [v & vv]]
+  (if (contains? checked v)
+  checked
+  vv
+  ))
+
+(defn first-duplicate
+  [checked [v & vv]]
+  (if (contains? checked v)
+    v
+    (first-duplicate (conj checked v) vv)))
+
+(defn find-hq
+  []
+  (first-duplicate #{} (:visited (follow-map read-input-file))))
+
+(defn dist-to-hq
+  []
+  (total-distance (first-duplicate #{} (:visited (follow-map read-input-file)))))
 
 (defn -main
   [& args]
