@@ -93,13 +93,6 @@
   [checked [v & vv]]
   v)
 
-(defn first-duplicate3
-  [checked [v & vv]]
-  (if (contains? checked v)
-  checked
-  vv
-  ))
-
 (defn first-duplicate
   [checked [v & vv]]
   (if (contains? checked v)
