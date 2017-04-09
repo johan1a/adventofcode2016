@@ -99,31 +99,12 @@
   []
   (first-duplicate #{} (:visited (follow-map read-input-file))))
 
-(defn dist-to-hq
+
+(defn dist-to-first-hq
+  []
+  (total-distance (to-pos (follow-map read-input-file))))
+
+(defn dist-to-second-hq
   []
   (total-distance (first-duplicate #{} (:visited (follow-map read-input-file)))))
-
-(defn -main
-  [& args]
-  (total-distance (follow-map read-input-file)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
