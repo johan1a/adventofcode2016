@@ -27,16 +27,24 @@
   (map #(sort-by second %) (map frequencies (columns msgs))))
 
 (defn error-correct
-  [msgs]
-  (str/join (map first (map last (get-frequencies msgs)))))
+  [msgs f]
+  (str/join (map first (map f (get-frequencies msgs)))))
 
 (defn test-part1
   []
-  (error-correct (test-input)))
+  (error-correct (test-input) last))
 
 (defn part1
   []
-  (error-correct (read-file "input.txt")))
+  (error-correct (read-file "input.txt") last))
+
+(defn test-part2
+  []
+  (error-correct (read-file "testinput.txt") first))
+
+(defn part2
+  []
+  (error-correct (read-file "input.txt") first))
 
 (defn -main
   "I don't do a whole lot ... yet."
