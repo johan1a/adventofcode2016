@@ -35,16 +35,20 @@
     (subs s i j))))
 
 (defn valid-subs
-   [ss]
-  (filter #(= 4 (count %)) (all-subs ss)))
+   [ss n]
+  (filter #(= n (count %)) (all-subs ss)))
+
+(defn get-palindromes
+  [string n]
+  (filter is-palindrome (valid-subs string n)))
 
 (defn contains-palindrome
-  [string]
-  (> (count (filter is-palindrome (valid-subs string))) 0 ))
+  [string n]
+  (> (count (get-palindromes string n)) 0 ))
 
 (defn with-palindromes
   [ss]
-  (count (filter contains-palindrome ss)) )
+  (count (filter #(contains-palindrome % 4) ss )) )
 
 (defn is-valid
   [x]
@@ -52,19 +56,53 @@
   (> (with-palindromes (:outside x)) 0 )
   (= (with-palindromes (:inside x)) 0 )))
 
+(defn get-abas
+  [ss]
+  (flatten (map #(get-palindromes % 3) ss)))
+
+(defn reverse-aba
+  [aba]
+  (str (second aba) (first aba) (second aba)))
+
+;;http://stackoverflow.com/questions/16264813/clojure-idiomatic-way-to-call-contains-on-a-lazy-sequence
+(defn lazy-contains? [coll key]
+    (boolean (some #(= % key) coll)))
+
+(defn is-valid-ssl
+  [x]
+  (let [abas ( get-abas (:outside x))
+        needed-babs (map reverse-aba abas)
+        found-babs (get-abas (:inside x))]
+  (> (count (filter #(lazy-contains? needed-babs %) found-babs)) 0)))
+
 (defn count-valid
-  [lines]
-    (count (filter is-valid lines)))
+  [f lines]
+    (count (filter f lines)))
 
 (defn get-lines
   [file-name]
   (map parse-line (read-file file-name)))
 
-
 (defn count-in-file
-  [file-name]
-  (count-valid (get-lines file-name)))
+  [f file-name]
+  (count-valid f (get-lines file-name)))
 
 (defn part-one
   []
-  (count-in-file "input.txt"))
+  (count-in-file is-valid "input.txt"))
+
+(defn part-two
+  []
+  (count-in-file is-valid-ssl "input.txt" ))
+
+(defn test-part-two
+  []
+  (count-in-file is-valid-ssl "test-input2.txt" ))
+
+
+
+
+
+
+
+
