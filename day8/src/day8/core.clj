@@ -19,6 +19,16 @@
   [n v]
   (vec (repeat n v)))
 
+(defn convert-pixel
+  [p]
+  (if (= 1 p)
+    "1"
+    " "))
+
+(defn pretty2
+  [s]
+ (map println (map #(map convert-pixel %) s)))
+
 (defn pretty
   [s]
   (map println s))
@@ -99,14 +109,21 @@
 
 (defn exec-file
   [file-name]
-  (let [lines (read-file file-name)
-        final-state (exec-lines empty-state lines)]
-  (sum final-state)))
+  (let [lines (read-file file-name)]
+  (exec-lines empty-state lines)))
 
+(defn sum-file
+  [file-name]
+  (sum (exec-file file-name)))
 
 (defn part-one
   []
-  (exec-file "input.txt"))
+  (sum-file "input.txt"))
+
+(defn part-two
+  []
+  (pretty2 (exec-file "input.txt")))
+
 
 
 
