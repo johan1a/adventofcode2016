@@ -97,14 +97,25 @@
   [input]
   (first input))
 
-(defn part-1
+(defn run-file
   []
   (let [input (get-input)
         give-cmds (get-give-cmds input)
         value-cmds (get-value-cmds input)
-        s1 (exec-value-cmds (initial-bots) value-cmds)
-        s2 (exec-give-cmds s1 give-cmds)]))
+        s1 (exec-value-cmds (initial-bots) value-cmds)]
+    (exec-give-cmds s1 give-cmds)))
 
+(defn part-1
+  []
+  (let [state (run-file)]))
+
+(defn part-2
+  []
+  (let [state (run-file)]
+  (*   (first (get state "output 0"))
+       (first (get state "output 1"))
+       (first (get state "output 2")))))
+  
 
 
 
