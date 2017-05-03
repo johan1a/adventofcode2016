@@ -186,53 +186,11 @@
 
 (defn neighbors
   [state S]
-      (let [possible (possible-moves state)]
-       (filter #(not (contains? S %)) possible)))
+      (do (let [possible (possible-moves state)
+         ;   p (println "in neighbors")
+            ]
+       (filter #(not (contains? (set S) %)) possible))))
 
-(def Q (ref #{}))
-(def S (ref #{}))
-(def Parents (ref {}))
-
-(defn get-Q [] @Q)
-(defn get-S [] @S)
-(defn get-Parents [] @Parents)
-
-(defn update-Q [q]
-  (dosync (ref-set Q (set q))))
-
-(defn update-S [s]
-  (dosync (ref-set S (set s))))
-
-(defn update-Parents [p]
-  (dosync (ref-set Parents p)))
-
-(defn first-Q [] 
-  (let [v (first (get-Q))]
-    (update-Q (rest (get-Q)))
-    v))
-(defn first-S [] 
-  (let [v (first (get-S))]
-    (update-S (rest (get-S)))
-    v))
-
-(defn search-iterative
-  [state]
-  (update-S [state])
-  (update-Q [state])
-  (update-Parents {})
-    (loop [q (get-Q)]
-      (let [current (first-Q)
-            neighbors (neighbors current (get-S))]
-          (doseq [n neighbors]
-            (if (= t1 current) (pprint (count (get-Parents))))
-            (if (= t1 current) (pprint (get-Parents)))
-            (if (= t1 current) (pprint (current (get-Parents))))
-            (update-S (conj (get-S) n))
-            (update-Parents (assoc (get-Parents) n current))
-            (update-Q (conj (get-Q) n)))
-      (if (goal-state? current) 
-        {:goal current :parents (get-Parents)}
-        (recur (get-Q))))))
 
 (defn follow 
   ([n parents1] (follow n parents1 []))
@@ -242,15 +200,60 @@
               (recur parent parents1 (cons parent path))
               path))))
 
+(defn make-goal
+  [current goals]
+  (conj goals {:goal current 
+               :parents (get-Parents) 
+               :length (count (follow current (get-Parents)))}))
+
+(defn assoc-multiple
+  [map1 keys1 value]
+  (reduce #(assoc %1 %2 value) map1 keys1))
+
+(defn get-min
+  [q]
+  (first (sort-by (fn [x] (get q x)) (keys q))))
+
+(defn get-dist
+  [dists k]
+   (let [dist (get dists k)]
+     (if dist dist Integer/MAX_VALUE)))
+
+(defn shortest-path
+  [src]
+    (loop [q (assoc {} src 0)
+           dist (assoc {} src 0)
+           prev {}]
+      (if (= (count q) 0)
+        [dist prev]
+        (let [u  (get-min q)
+              ll (loop [nn (neighbors u {})
+                        q2 (dissoc q u)
+                        dist2 dist
+                        prev2 prev]
+                      (if (= 0 (count nn))
+                          [q2 dist2 prev2]
+                          (let [v (first nn)
+                                alt (+ 1 (get dist2 u))
+                                dist-v (get-dist dist2 v)]
+                            (if (< alt dist-v) 
+                                    (recur (rest nn)
+                                       (assoc q2 v alt)
+                                       (assoc dist2 v alt)
+                                       (assoc prev2 v u))
+                                    (recur (rest nn)
+                                       q2
+                                       dist2
+                                       prev2)))))]
+                        (recur (dissoc (get ll 0) u) ; remove u from q
+                               (get ll 1)
+                               (get ll 2))))))
+  
 (defn do-search
   [state]
   (update-visited #{})
   (let [results (search-recursive state 0 [])]
     results))
-
-
-
-  
 
 (defn best-solution
   [solutions]
@@ -383,6 +386,20 @@
      {:type "microchip" :substance "ruthenium" :floor 2}
      {:type "microchip" :substance "plutonium" :floor 2}}
    :elevator 0})
+
+(def part1-goal
+  {:devices
+    #{{:type "generator" :substance "promethium" :floor 3} 
+     {:type "microchip" :substance "promethium" :floor 3}
+     {:type "generator" :substance "cobalt" :floor 3} 
+     {:type "generator" :substance "curium" :floor 3}
+     {:type "generator" :substance "ruthenium" :floor 3}
+     {:type "generator" :substance "plutonium" :floor 3}
+     {:type "microchip" :substance "cobalt" :floor 3}
+     {:type "microchip" :substance "curium" :floor 3}
+     {:type "microchip" :substance "ruthenium" :floor 3}
+     {:type "microchip" :substance "plutonium" :floor 3}}
+   :elevator 3})
 
 
 
