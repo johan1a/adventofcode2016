@@ -6,6 +6,37 @@
 (require '[clojure.math.combinatorics :as combo])
 (use '[clojure.pprint :only (pprint)])
 
+; pairs: [generator, microchip]
+(def x0
+  {:pairs
+    [ [ 0  0 ]
+      [ 1  2 ]
+      [ 1  2 ]
+      [ 1  2 ]
+      [ 1  2 ] ]
+   :elevator 0})
+
+(def goal0
+  {:pairs
+    [ [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ] ]
+   :elevator 3})
+
+(def xt
+  {:pairs
+    [ [ 1 0 ]
+      [ 2 0 ] ]
+   :elevator 0})
+
+(def goalt
+  {:pairs
+    [ [ 3 3 ]
+      [ 3 3 ] ]
+   :elevator 3})
+
 (def all-floors [0 1 2 3])
 (def not-found -1)
 (def goal-floor 3)
@@ -79,17 +110,6 @@
   [device d]
   (update device :floor d ))
 
-; return two new states where the devices have been moved up and down
-(defn up-and-down
-  [devices to-move elevator]
-  (let [removed (set (remove (set to-move) devices))
-        moved-up (set (map #(change-floor % inc) to-move))
-        moved-down (set (map #(change-floor % dec) to-move))
-        down-devices (apply conj removed moved-down)
-        up-devices (apply conj removed moved-up)
-        down-state {:devices down-devices :elevator (dec elevator)}
-        up-state {:devices up-devices :elevator (inc elevator)}]
-     (filter #(valid-state? %) [down-state up-state])))
 
 
 ; en för varje unik med två 0, och en för varje unik kombintion med en i varje upp,
@@ -224,14 +244,6 @@
               (flatten 
                 (concat up-states-2 up-states-1 down-states-1 down-states-2 ))))))
 
-(defn goal-state?
-  [state]
-  (let [devices (:devices state)
-        res (every? #(= goal-floor (:floor %)) devices)
-        ;ppp (if res (println nbr-moves))
-        ]
-    res))
-
 (defn neighbors
   [state S]
       (do (let [possible (possible-moves state)
@@ -251,9 +263,20 @@
   [map1 keys1 value]
   (reduce #(assoc %1 %2 value) map1 keys1))
 
+(defn average
+  [state]
+  (let [nn (cons (:elevator state) (flatten (:pairs state)))]
+    (/ (reduce + nn) (+ 1 (count nn)))))
+
+  
+
 (defn state-cost-factor
   [x]
-  (- max-floor (:elevator x)))
+;  1)
+ ; (* 100 (- max-floor (:elevator x))))
+
+  (let [fact (/ (average x) max-floor)]
+    (/ 100 (* fact fact fact fact))))
 
 (defn cost
   [q x]
@@ -268,12 +291,26 @@
    (let [dist (get dists k)]
      (if dist dist Integer/MAX_VALUE)))
 
+(defn should-terminate? 
+  [q dists goal]
+  (or (= (count q) 0)
+      (> (get dists (get-min q)) (get dists goal))))
+
+(defn searched
+  [t]
+  (count (:dists t)))
+
 (defn shortest-path
-  [src]
+  [src goal]
     (loop [q (assoc {} src 0)
-           dist (assoc {} src 0)
+           dist {src 0 goal Integer/MAX_VALUE}
            prev {}]
-      (if (= (count q) 0)
+  ;    (do (let [the-min  (get-min q)]
+ ;         (pprint (str the-min " distance: " (get dist the-min)  " count q: " (count (keys q))
+;                       " cost: " (float (cost q the-min))  " searched: "      (count (keys dist))
+ ;                      ))
+            ;))
+      (if (should-terminate? q dist goal) 
         {:dists dist :prevs prev}
         (let [u  (get-min q)
               ll (loop [nn (neighbors u {})
@@ -286,7 +323,13 @@
                                 alt (+ 1 (get dist2 u))
                                 dist-v (get-dist dist2 v)]
                             (if (< alt dist-v) 
-                                    (do (println alt)
+                                    (do 
+                                     ; (if (not (contains? (set (vals dist)) alt)) (println alt))
+                                        (if (= goal v) 
+                                          (do 
+                                            (pprint (str "found goal at: " alt))
+                                            (pprint v)
+                                            ))
                                       (recur (rest nn)
                                        (assoc q2 v alt)
                                        (assoc dist2 v alt)
@@ -307,24 +350,4 @@
       path
       ))))
 
-(def tt #{t0 t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11})
-
-; pairs: [generator, microchip]
-(def x0
-  {:pairs
-    [ [ 0  0 ]
-      [ 1  2 ]
-      [ 1  2 ]
-      [ 1  2 ]
-      [ 1  2 ] ]
-   :elevator 0})
-
-(def xt
-  {:pairs
-    [ [ 0  0 ]
-      [ 0  2 ]
-      [ 1  0 ]
-      [ 0  2 ]
-      [ 1  2 ] ]
-   :elevator 0})
 
