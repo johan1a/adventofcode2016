@@ -74,59 +74,6 @@
 (def goal-floor 3)
 (def max-floor 3)
 
-(defn generator-counterpart
-  [device]
-  (assoc device :type "generator"))
-
-(defn has-no-generator?
-  [state device]
-  (let [generator (generator-counterpart device)]
-    (some generator state)))
-
-(defn chips-ok?
-  [state floor]
-  (let [devices (filter #(= floor (:floor %)) state)
-        chips (filter #(= "microchip" (:type %)) state)]))
-
-(defn floor-ok?
-  [device]
-  (let [floor (:floor device)]
-    (and (>= floor 0) (<= floor max-floor))))
-
-(defn generator-counterpart
-  [device]
-  (assoc device :type "generator"))
-
-(defn has-no-generator?
-  [generators microchip]
-  (let [generator (generator-counterpart microchip)]
-    (not (contains? generators generator))))
-
-(defn get-chips
-  [devices]
-  (set (filter #(= "microchip" (:type %)) devices)))
-
-(defn get-generators
-   [devices]
-   (set (filter #(= "generator" (:type %)) devices)))
-
-(defn without-generator
-  [generators chips]
-  (filter #(has-no-generator? generators %) chips))
-
-(defn chips-ok?
-  [devices floor]
-  (let [on-floor (set (filter #(= floor (:floor %)) devices))
-        chips (get-chips on-floor)
-        generators (get-generators on-floor)
-        without-generator (without-generator generators chips)]
-        (not (and (> (count without-generator) 0) 
-                  (> (count generators) 0)))))
-
-(defn devices-ok?
-  [devices]
-  (every? true? (map #(chips-ok? devices %) all-floors)))
-
 (defn flatten-one
   "Flatten one level"
   [ll]
@@ -141,8 +88,6 @@
 (defn change-floor
   [device d]
   (update device :floor d ))
-
-
 
 ; en för varje unik med två 0, och en för varje unik kombintion med en i varje upp,
 ; och (evenutellt går att optimera bort) en för varje ed en 0 med endast en uppdaterad
@@ -278,56 +223,21 @@
 
 (defn neighbors
   [state S]
-      (do (let [possible (possible-moves state)
-         ;   p (println "in neighbors")
-            ]
+      (do (let [possible (possible-moves state)]
        (filter #(not (contains? (set S) %)) possible))))
-
-(defn follow 
-  ([n parents1] (follow n parents1 []))
-  ([n parents1 path]
-    (let [parent (get parents1 n)]
-          (if parent 
-              (recur parent parents1 (cons parent path))
-              path))))
 
 (defn assoc-multiple
   [map1 keys1 value]
   (reduce #(assoc %1 %2 value) map1 keys1))
-
-(defn average
-  [state]
-  (let [nn (cons (:elevator state) (flatten (:pairs state)))]
-    (/ (reduce + nn) (+ 1 (count nn)))))
-
-  
-
-(defn state-cost-factor
-  [x]
-;  1)
- ; (* 100 (- max-floor (:elevator x))))
-
-  (let [fact (/ (average x) max-floor)]
-    (/ 1000000 (* fact fact))))
-
-(defn cost
-  [q x]
-  (* (state-cost-factor x) (get q x)))
-
-(defn get-min
-  [q]
-  (first (sort-by #(cost q %) (keys q))))
 
 (defn get-dist
   [dists k]
    (let [dist (get dists k)]
      (if dist dist Integer/MAX_VALUE)))
 
-
 (defn searched
   [t]
   (count (:dists t)))
-
 
 (defn not-contains?
   [s v]
@@ -346,7 +256,6 @@
 (defn get-time
   []
   (System/currentTimeMillis))
-
 
 (defn diff
   [a b]
@@ -395,8 +304,8 @@
                                           (do 
                                             (pprint (str "found goal at: " tentative))
                                             (pprint v)
-                                            (pprint (str "Elapsed: " (- (get-time) start-time) " ms."))
-                                            (pprint (str "in open:" (count open2)))
+                                            (pprint (str "Elapsed time: " (- (get-time) start-time) " msecs"))
+                                            (pprint (str "in open: " (count open2)))
 ;                                            (read-line)
                                             ))
                                       (recur (assoc open2 v (+ tentative (heuristic v goal)))
