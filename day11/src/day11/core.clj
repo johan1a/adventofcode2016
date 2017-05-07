@@ -37,6 +37,17 @@
       [ 1  2 ] ]
    :elevator 0})
 
+(def x1
+  {:pairs
+    [ [ 0  0 ]
+      [ 1  2 ]
+      [ 1  2 ]
+      [ 1  2 ]
+      [ 1  2 ] 
+      [ 0  0 ] 
+      [ 0  0 ] ]
+   :elevator 0})
+
 (def goal0
   {:pairs
     [ [ 3  3 ]
@@ -317,9 +328,6 @@
   [t]
   (count (:dists t)))
 
-(defn heuristic
-  [src goal]
-  (* 2 (reduce + (map - (flatten (:pairs goal)) (flatten (:pairs src))))))
 
 (defn not-contains?
   [s v]
@@ -330,16 +338,33 @@
   (let [closest (peek dists)
         cdist (second closest)
         gdist (get dists goal)]
-    (or 
+    (or
+      (= (first (peek open)) goal) 
       (= (count open) 0)
       (= cdist gdist))))
 
+(defn get-time
+  []
+  (System/currentTimeMillis))
 
 
-;    (> (second (peek dists)) (get dists goal))))
+(defn diff
+  [a b]
+  (reduce + (map - (flatten (:pairs a)) (flatten (:pairs b)))))
+
+(defn prune-singles
+  [curr nn]
+  (let [downs (filter #(< (:elevator %) (:elevator curr)) nn)
+        ups (filter #(> (:elevator %) (:elevator curr)) nn)
+        twos (filter #(= 2 (diff % curr)) ups)
+        ones (filter #(= 1 (diff % curr)) ups)]
+        (if (> (count twos) 0)
+            (concat twos downs)
+            (concat ones downs))))
 
 (defn shortest-path
-  [src goal]
+  ([heuristic src goal] (shortest-path heuristic src goal (get-time)))
+  ([heuristic src goal start-time]
     (loop [open (priority-map src (heuristic src goal))
            closed #{}
            fscores (priority-map src (heuristic src goal))
@@ -351,13 +376,13 @@
       (if (should-terminate? open dist goal) 
         {:dists dist :prevs prev}
         (let [curr (first (peek open))
-              p (get prev curr)
               ll (loop [open2 (pop open)
                         closed2 (conj closed curr)
-                        nn (filter #(not-contains? closed2 %) (neighbors curr {}))
+                        nn (prune-singles curr (neighbors curr closed2))
                         fscores2 fscores
                         dist2 dist
                         prev2 prev]
+;                   (pprint curr)
                       (if (= 0 (count nn))
                           [open2 closed2 fscores2 dist2 prev2 ]
                           (let [v (first nn)
@@ -370,6 +395,8 @@
                                           (do 
                                             (pprint (str "found goal at: " tentative))
                                             (pprint v)
+                                            (pprint (str "Elapsed: " (- (get-time) start-time) " ms."))
+                                            (pprint (str "in open:" (count open2)))
 ;                                            (read-line)
                                             ))
                                       (recur (assoc open2 v (+ tentative (heuristic v goal)))
@@ -388,11 +415,26 @@
                                (get ll 1)
                                (dissoc (get ll 2) curr) ; remove curr from fscores
                                (get ll 3)
-                               (get ll 4))))))
+                               (get ll 4)))))))
+
+(defn heuristic1
+  [src goal]
+  (* 2 (reduce + (map - (flatten (:pairs goal)) (flatten (:pairs src))))))
+
+(defn heuristic2
+  [src goal]
+  (let [diffs (map - (flatten (:pairs goal)) (flatten (:pairs src)))
+        sum1  (reduce + diffs)
+        ]
+   (reduce + (map #(* 1.7 %) diffs))))
 
 (defn part-one
   []
-  (time (shortest-path x0 goal0)))
+  (time (shortest-path heuristic1 x0 goal0)))
+
+(defn part-two
+  []
+  (time (shortest-path heuristic2 x1 goal0)))
 
 (defn follow-path
   ([prevs curr path]
