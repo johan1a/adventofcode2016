@@ -1,10 +1,31 @@
 (ns day11.core
   (:gen-class)
-  (:require clojure.pprint))
+  (:require clojure.pprint
+            [clojure.data.priority-map :refer :all]))
   (require '[clojure.string :as str])
   (require '[clojure.set :as set])
+  (require '[clojure.data.priority-map :as pm])
 (require '[clojure.math.combinatorics :as combo])
 (use '[clojure.pprint :only (pprint)])
+
+
+;The first floor contains a promethium generator and a promethium-compatible microchip.
+;The second floor contains a cobalt generator, a curium generator, a ruthenium generator, and a plutonium generator.
+;The third floor contains a cobalt-compatible microchip, a curium-compatible microchip, a ruthenium-compatible microchip, and a plutonium-compatible microchip.
+;The fourth floor contains nothing relevant.
+
+
+;
+; COM CUM RUM PLM
+; COG CUG RUG PLG
+; PRG PRM
+
+; promethium G0 M0
+; cobalt     G1 M2
+; curium     G1 M2
+; ruthenium  G1 M2
+; plutonium  G1 M2
+
 
 ; pairs: [generator, microchip]
 (def x0
@@ -276,7 +297,7 @@
  ; (* 100 (- max-floor (:elevator x))))
 
   (let [fact (/ (average x) max-floor)]
-    (/ 100 (* fact fact fact fact))))
+    (/ 1000000 (* fact fact))))
 
 (defn cost
   [q x]
@@ -293,8 +314,11 @@
 
 (defn should-terminate? 
   [q dists goal]
-  (or (= (count q) 0)
-      (> (get dists (get-min q)) (get dists goal))))
+;  (or 
+    (= (count q) 0)
+   ;   (> (get dists (get-min q)) (get dists goal))))
+  )
+
 
 (defn searched
   [t]
@@ -305,11 +329,9 @@
     (loop [q (assoc {} src 0)
            dist {src 0 goal Integer/MAX_VALUE}
            prev {}]
-  ;    (do (let [the-min  (get-min q)]
- ;         (pprint (str the-min " distance: " (get dist the-min)  " count q: " (count (keys q))
-;                       " cost: " (float (cost q the-min))  " searched: "      (count (keys dist))
- ;                      ))
-            ;))
+      (do (let [the-min  (get-min q)]
+          (pprint (str the-min " distance: " (get dist the-min)  " count q: " (count (keys q))
+                       " cost: " (float (cost q the-min))  " searched: "      (count (keys dist))))))
       (if (should-terminate? q dist goal) 
         {:dists dist :prevs prev}
         (let [u  (get-min q)
