@@ -1,0 +1,11 @@
+33
+"found goal at: 33"
+{:pairs [(3 3) (3 3) (3 3) (3 3) (3 3)], :elevator 3}
+34
+34
+34
+34
+"Elapsed time: 6697699.893593 msecs"
+#'day11.core/t
+day11.core=>
+

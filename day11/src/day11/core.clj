@@ -312,57 +312,86 @@
    (let [dist (get dists k)]
      (if dist dist Integer/MAX_VALUE)))
 
-(defn should-terminate? 
-  [q dists goal]
-;  (or 
-    (= (count q) 0)
-   ;   (> (get dists (get-min q)) (get dists goal))))
-  )
-
 
 (defn searched
   [t]
   (count (:dists t)))
 
+(defn heuristic
+  [src goal]
+  (reduce + (map - (flatten (:pairs goal)) (flatten (:pairs src)))))
+
+(defn not-contains?
+  [s v]
+  (not (contains? s v)))
+
+(defn should-terminate? 
+  [q dists goal]
+  (or 
+    (= (count q) 0)))
+;      (> (get dists (first (peek q))) (get dists goal))))
+
+
 (defn shortest-path
   [src goal]
-    (loop [q (assoc {} src 0)
+    (loop [open (priority-map src (heuristic src goal))
+           closed #{}
+           fscores (priority-map src (heuristic src goal))
            dist {src 0 goal Integer/MAX_VALUE}
-           prev {}]
-      (do (let [the-min  (get-min q)]
-          (pprint (str the-min " distance: " (get dist the-min)  " count q: " (count (keys q))
-                       " cost: " (float (cost q the-min))  " searched: "      (count (keys dist))))))
-      (if (should-terminate? q dist goal) 
+           prev {}
+           ]
+ ;     (do (let [the-min (first (peek fscores))
+ ;               min-priority (second (peek fscores))]
+;          (pprint (str the-min ))
+;            ))
+;                       " distance: "      (get dist the-min)  
+;                       " count q: "       (count (keys q))
+;                       " cost: "          (float (cost q the-min))  
+;                       " searched: "      (count (keys dist))))))
+      (if (should-terminate? open dist goal) 
         {:dists dist :prevs prev}
-        (let [u  (get-min q)
-              ll (loop [nn (neighbors u {})
-                        q2 (dissoc q u)
+        (let [curr  (first (peek open))
+              ll (loop [open2 (pop open)
+                        closed2 (conj closed curr)
+                        nn (filter #(not-contains? closed2 %) (neighbors curr {}))
+                        fscores2 fscores
                         dist2 dist
-                        prev2 prev]
+                        prev2 prev
+                        ]
                       (if (= 0 (count nn))
-                          [q2 dist2 prev2]
+                          [open2 closed2 fscores2 dist2 prev2 ]
                           (let [v (first nn)
-                                alt (+ 1 (get dist2 u))
+                                tentative (+ 1 (get dist2 curr))
                                 dist-v (get-dist dist2 v)]
-                            (if (< alt dist-v) 
+                            (if (< tentative dist-v) 
                                     (do 
-                                     ; (if (not (contains? (set (vals dist)) alt)) (println alt))
+                                      (if (not (contains? (set (vals dist)) tentative)) (println tentative))
                                         (if (= goal v) 
                                           (do 
-                                            (pprint (str "found goal at: " alt))
-                                            (pprint v)
+                                            (pprint (str "found goal at: " tentative))
+                                           (pprint v)
                                             ))
-                                      (recur (rest nn)
-                                       (assoc q2 v alt)
-                                       (assoc dist2 v alt)
-                                       (assoc prev2 v u)))
-                                    (recur (rest nn)
-                                       q2
+                                      (recur (assoc open2 v (+ tentative (heuristic v goal)))
+                                        (conj closed2 curr)
+                                        (rest nn)
+                                       (assoc fscores2 v (+ tentative (heuristic v goal)))
+                                       (assoc dist2 v tentative)
+                                       (assoc prev2 v curr)
+                              ))
+                                    (recur open2
+                                       (conj closed2 curr)
+                                      (rest nn)
+                                       fscores2
                                        dist2
-                                       prev2)))))]
-                        (recur (dissoc (get ll 0) u) ; remove u from q
+                                       prev2
+                                      )
+                              ))))]
+                        (recur (get ll 0) 
                                (get ll 1)
-                               (get ll 2))))))
+                               (dissoc (get ll 2) curr) ; remove curr from fscores
+                               (get ll 3)
+                               (get ll 4)
+                          )))))
 
 (defn follow-path
   ([prevs curr path]
