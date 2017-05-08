@@ -8,25 +8,6 @@
 (require '[clojure.math.combinatorics :as combo])
 (use '[clojure.pprint :only (pprint)])
 
-
-;The first floor contains a promethium generator and a promethium-compatible microchip.
-;The second floor contains a cobalt generator, a curium generator, a ruthenium generator, and a plutonium generator.
-;The third floor contains a cobalt-compatible microchip, a curium-compatible microchip, a ruthenium-compatible microchip, and a plutonium-compatible microchip.
-;The fourth floor contains nothing relevant.
-
-
-;
-; COM CUM RUM PLM
-; COG CUG RUG PLG
-; PRG PRM
-
-; promethium G0 M0
-; cobalt     G1 M2
-; curium     G1 M2
-; ruthenium  G1 M2
-; plutonium  G1 M2
-
-
 ; pairs: [generator, microchip]
 (def x0
   {:pairs
@@ -36,6 +17,15 @@
       [ 1  2 ]
       [ 1  2 ] ]
    :elevator 0})
+
+(def goal0
+  {:pairs
+    [ [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ]
+      [ 3  3 ] ]
+   :elevator 3})
 
 (def x1
   {:pairs
@@ -48,14 +38,17 @@
       [ 0  0 ] ]
    :elevator 0})
 
-(def goal0
+(def goal1
   {:pairs
     [ [ 3  3 ]
       [ 3  3 ]
       [ 3  3 ]
       [ 3  3 ]
+      [ 3  3 ] 
+      [ 3  3 ] 
       [ 3  3 ] ]
    :elevator 3})
+
 
 (def xt
   {:pairs
@@ -88,25 +81,6 @@
 (defn change-floor
   [device d]
   (update device :floor d ))
-
-; en för varje unik med två 0, och en för varje unik kombintion med en i varje upp,
-; och (evenutellt går att optimera bort) en för varje ed en 0 med endast en uppdaterad
-
-; map inc2 pairs + 
-
-
-; behöver typ replaceone
-;incenivarje cc = 1010 1001 0110 0101
-; om båda är = 0, returnera ett state där dessa två par har dessa positioner ökade
-; mxa fyra nya statejjhh
-
-; cc = (combo/combinations pairs 2)
-;(map (incenivarje pairs) cc)
-
-; + samma som ovan fast för bara ett par i taget, där man ökar en 
-
-; +
-;  map 
 
 ; variations to increase / decrease one pair
 (def offsets-1    [[0 1]
@@ -152,7 +126,7 @@
             index (.indexOf pairs pair)
             new-pairs (assoc pairs index new-pair)
             ]
-        {:pairs  new-pairs :elevator (+ sign floor)})
+        {:pairs new-pairs :elevator (+ sign floor)})
       false))
 
 (defn make-offset-state-2
@@ -205,6 +179,10 @@
     false
     (pairs-ok? (:pairs state))))
 
+(defn sort-state
+  [state]
+  {:pairs (vec (sort (map vec (:pairs state)))) :elevator (:elevator state)})
+
 (defn possible-moves
   [state]
   (let [pairs (:pairs state)
@@ -218,8 +196,9 @@
         ]
     (filter valid-state?
             (distinct 
-              (flatten 
-                (concat up-states-2 up-states-1 down-states-1 down-states-2 ))))))
+              (map sort-state
+                (flatten 
+                  (concat up-states-2 up-states-1 down-states-1 down-states-2 )))))))
 
 (defn neighbors
   [state S]
@@ -279,7 +258,6 @@
            fscores (priority-map src (heuristic src goal))
            dist (priority-map src 0 goal Integer/MAX_VALUE)
            prev {}]
-;      (pprint (first (peek open)))
 ;      (pprint (get prev (first (peek open)) ))
 ;      (pprint (get dist (get prev (first (peek open))) ))
       (if (should-terminate? open dist goal) 
@@ -291,7 +269,6 @@
                         fscores2 fscores
                         dist2 dist
                         prev2 prev]
-;                   (pprint curr)
                       (if (= 0 (count nn))
                           [open2 closed2 fscores2 dist2 prev2 ]
                           (let [v (first nn)
@@ -309,13 +286,13 @@
 ;                                            (read-line)
                                             ))
                                       (recur (assoc open2 v (+ tentative (heuristic v goal)))
-                                       (conj closed2 curr)
+                                       closed2
                                        (rest nn)
                                        (assoc fscores2 v (+ tentative (heuristic v goal)))
                                        (assoc dist2 v tentative)
                                        (assoc prev2 v curr)))
                                     (recur open2
-                                       (conj closed2 curr)
+                                       closed2
                                        (rest nn)
                                        fscores2
                                        dist2
@@ -337,13 +314,17 @@
         ]
    (reduce + (map #(* 1.7 %) diffs))))
 
+(defn heuristic3
+  [src goal]
+  (* 1.8 (reduce + (map - (flatten (:pairs goal)) (flatten (:pairs src))))))
+
 (defn part-one
   []
-  (time (shortest-path heuristic1 x0 goal0)))
+  (shortest-path heuristic1 x0 goal0))
 
 (defn part-two
   []
-  (time (shortest-path heuristic2 x1 goal0)))
+  (time (shortest-path heuristic3 x1 goal1)))
 
 (defn follow-path
   ([prevs curr path]
