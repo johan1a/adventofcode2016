@@ -25,12 +25,12 @@
 
 (defn initial 
   [file]
-  {:cmds (parse-lines file) :pc 0 :regs {}})
+  {:cmds (parse-lines file) :pc 0 :regs {"a" 0 "b" 0 "c" 0 "d" 0}})
 
 (defn exec-jnz
   [cmd state]
-  (let [register (get cmd :a)
-        offset (get cmd :b)
+  (let [register (:a cmd)
+        offset (:b cmd)
         value (get (:regs state) register) ]
         (if (= 0 value)
             (update state :pc inc)
@@ -83,17 +83,16 @@
 
 (defn exec-cmds
   [state] 
+;  (pprint state)
    (if (>= (:pc state) (count (:cmds state)))
        state
        (let [pc (:pc state)
              cmd (nth (:cmds state) (:pc state))
-             ss (pprint cmd)
-             ss2 (pprint pc)
-             p (pprint (:regs state))
-             sd (pprint (str "next line: " cmd))
-             s (read-line)
+;             p (println (:regs state))
+;             sd (pprint (str "next line: " cmd))
              executed (exec-cmd cmd state)
-             gg (pprint executed)
+;             ff (println (str (:regs state) " " cmd))
+;             f (read-line)
              ]
        (recur executed))))
 
