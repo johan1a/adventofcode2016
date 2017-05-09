@@ -27,6 +27,10 @@
   [file]
   {:cmds (parse-lines file) :pc 0 :regs {"a" 0 "b" 0 "c" 0 "d" 0}})
 
+(defn initial-2
+  [file]
+  {:cmds (parse-lines file) :pc 0 :regs {"a" 0 "b" 0 "c" 1 "d" 0}})
+
 (defn exec-jnz
   [cmd state]
   (let [register (:a cmd)
@@ -91,16 +95,20 @@
 ;             p (println (:regs state))
 ;             sd (pprint (str "next line: " cmd))
              executed (exec-cmd cmd state)
-;             ff (println (str (:regs state) " " cmd))
+             ff (println (str (:regs state) " " cmd))
 ;             f (read-line)
              ]
        (recur executed))))
 
 (defn exec-program
-  [file]
-  (exec-cmds (initial file)))
+  [state]
+  (exec-cmds state))
 
 (defn part-one
   []
-  (exec-program "input.txt"))
+  (exec-program (initial "input.txt")))
+
+(defn part-two
+  []
+  (exec-program (initial-2 "input.txt")))
 
