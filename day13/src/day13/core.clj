@@ -41,8 +41,8 @@
 
 (defn positive?
   [state]
-  (and (> (:x state) 0)
-       (> (:y state) 0)))
+  (and (>= (:x state) 0)
+       (>= (:y state) 0)))
 
 (defn valid-state?
   [state]
@@ -162,4 +162,76 @@
 (defn part-one
   []
   (shortest-path heuristic1 start goal))
+
+(defn should-terminate2?
+  [open]
+     (= (count open) 0))
+
+
+
+
+
+(defn representation2
+  [state known]
+  (if (contains? known state) "O" 
+      (if (valid-state? state) "." "#")))
+
+(defn representation-line2
+  [line known]
+  (str/join (map #(representation2 % known) line)))
+
+(defn draw-graph
+  [max1 known]
+  (map println (map #(representation-line2 % known) (get-map max1))))
+
+(defn is-weird?
+  [state]
+  (and (= (:y state) 2) (= 23 (:x state))))
+
+
+(defn build-graph
+  [src max-depth]
+   (loop [open #{src}
+          closed #{}
+          dists (priority-map src 0 goal Integer/MAX_VALUE) ]
+     (if (should-terminate2? open)
+       closed
+       (let [curr (first open)]
+            (if (> (get dists curr) max-depth)
+              (recur (drop 1 open)
+                     closed
+                     dists)
+              (let [res (loop [open2 (drop 1 open)
+                       closed2 (conj closed curr)
+                       nn (neighbors curr #{})
+                       dists2 dists ]
+                  (if (= 0 (count nn))
+                    [open2 closed2 dists2]
+                    (let [v (first nn)
+                          tentative (+ 1 (get dists2 curr))
+                          dist-v (get-dist dists2 v)]
+                      (if (< tentative dist-v)
+                          (recur (conj open2 v)
+                                 closed2
+                                 (rest nn)
+                                 (assoc dists2 v tentative))
+                        (recur open2
+                               closed2
+                               (rest nn)
+                               dists2)))))]
+         (recur (get res 0)
+                (get res 1)
+                (get res 2))))))))
+
+(defn part-two 
+  []
+  (count (build-graph start 50)))
+
+(defn part-two-debug
+  []
+  (draw-graph 50 (build-graph start 50)))
+
+
+
+
 
