@@ -2,7 +2,6 @@
   (:gen-class)
   (:require [clojure.string :as str]))
 
-
 (def start
   {:discs
    [{:n 5 :curr 2}
@@ -13,6 +12,8 @@
     {:n 7 :curr 0}]
    :ball {:falling false :curr -1}
    :time 0 })
+
+(def start2 (update start :discs #(conj % {:n 11 :curr 0})))
 
 (def test-start
   {:discs
@@ -69,6 +70,13 @@
   (if (will-finish? state) n
       (recur (wait state 1) (inc n)))))
 
+(defn part-one
+  []
+  (find-start-time start))
+
+(defn part-two
+  []
+  (find-start-time start2))
 
 
 
