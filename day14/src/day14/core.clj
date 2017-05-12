@@ -74,28 +74,43 @@
   [valid matching matching-i]
   (assoc (assoc valid :matching-hash matching) :matching-i matching-i))
 
+(defn stretch
+  [n string]
+  (if (= 0 n)
+      string
+      (recur (dec n) (md5 string))))
+
 (defn find-keys
-  [n pendings valids salt max1]
+  ([salt hash-func] (find-keys salt hash-func 0 64 #{} #{}))
+  ([salt hash-func n max1 pendings valids]
   (if (= 0 (mod n 100))
     (pprint (str "n: " n ", pendings: " 
                  (count pendings) ", valids: " (count valids))))
   (if (>= (count valids) max1)
       (sort-by :index valids)
-      (let [hash1 (md5 (str salt n))
+      (let [hash1 (hash-func (str salt n))
             new-pending (get-pending hash1 n)
             pendings2 (filter #(fresh? % n) pendings)
             new-valids (map #(make-valid % hash1 n) (filter #(is-valid? hash1 % n) pendings2))
             all-valids  (set (concat valids new-valids))
             pendings3 (filter #(not (contains? all-valids %)) (conj pendings2 new-pending))
             ]
-        (recur (inc n) pendings3 all-valids salt max1))))
+        (recur salt hash-func (inc n) max1 pendings3 all-valids)))))
 
 (defn part-one
   []
-  (nth (find-keys 0 #{} #{} puzzle-salt 64) 63))
+  (nth (find-keys puzzle-salt md5) 63))
 
-(defn test1
+(defn part-two
   []
-  (find-keys 0 #{} #{} test-salt 64))
+  (nth (find-keys puzzle-salt (partial stretch 2017)) 63))
+
+(defn test-one
+  []
+  (nth (find-keys test-salt md5) 63))
+
+(defn test-two
+  []
+  (nth (find-keys test-salt (partial stretch 2017)) 63))
 
 
