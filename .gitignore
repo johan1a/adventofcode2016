@@ -10,3 +10,4 @@
 */*.hgignore
 */*.hg/
 *.swp
+day16/data/*
