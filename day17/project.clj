@@ -7,4 +7,5 @@
                 [org.clojure/data.priority-map "0.0.7"]]
   :main ^:skip-aot day17.core
   :target-path "target/%s"
+  :jvm-opts ["-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-Xmx2G"]
   :profiles {:uberjar {:aot :all}})
