@@ -22,8 +22,6 @@
                   raw (.digest algorithm (.getBytes s))]
           (format "%032x" (BigInteger. 1 raw))))
 
-(def start2 { :pos [0 0] :hash (md5 password) })
-
 (def dirs [[0 -1]
            [0 1] 
            [-1 0] 
@@ -104,11 +102,6 @@
      (recur prev prevs (str (letter-diff state prev) string)))))
   
 (def get-hash-m (memoize get-hash))
-
-(defn make-state2
-  [state offset hash-]
-  {:pos (add (:pos state) (:dir offset))
-   :hash hash- })
 
 (defn get-dist
   [dists k default]
@@ -203,23 +196,13 @@
   (let [a (str/join (map #(get letter-diffs %) diffs))]
   (str password a)))
 
-(defn neighbors2
-  [state closed prevs paths]
-  (let [path (string-path (get-path paths prevs state))
-        hash1 (md5 path)
-        offsets (get-hash-offsets hash1) ]
-    (filter #(not (contains? closed %)) 
-            (filter #(valid-state? %) (map #(make-state2 state % hash1) offsets)))))
-
-
 (defn longest-path
   [heuristic src goal]
    (loop [open (priority-map-by > src (heuristic src goal))
           closed #{}
           fscores (priority-map-by > src (heuristic src goal))
           dists (priority-map-by > src 0 goal Integer/MIN_VALUE)
-          prevs {}
-          paths {src []} ]
+          prevs {} ]
      (let [c (count closed)]
        (if (= 0 (mod c 1000)) (pprint c)))
      (if (should-terminate? open dists goal)
@@ -228,7 +211,7 @@
              res (check-neighbors heuristic 
                                   (pop open) 
                                   (conj closed curr) 
-                                  (neighbors2 curr closed prevs paths) 
+                                  (neighbors curr closed) 
                                   fscores 
                                   dists 
                                   prevs
@@ -240,8 +223,7 @@
                 (get res 1)
                 (dissoc (get res 2) curr) ; remove curr from fscores
                 (get res 3)
-                (get res 4)
-                (assoc paths curr (get-path paths prevs curr)))))))
+                (get res 4))))))
 
 (def start2 { :pos [0 0] })
 
@@ -267,5 +249,5 @@
 
 (defn part-two
   []
-  (solve-longest start2))
+  (solve-longest start))
 
