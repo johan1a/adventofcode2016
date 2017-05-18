@@ -185,47 +185,106 @@
 
 (defn get-path
   [paths prevs state]
-  (let [p (get paths state)]
+  (let [p (get paths state) ]
     (if p p 
       (let [ prev (get prevs state)
         prev-path (get paths prev)]
-        (conj prev-path (sub-state state prev))))))
+        (str prev-path (letter-diff state prev))))))
 
 (defn string-path
   [diffs]
   (let [a (str/join (map #(get letter-diffs %) diffs))]
   (str password a)))
 
+(defn make-state2
+  [state path offset]
+  {:pos (add (:pos state) (:dir offset)) 
+   :hash (md5 (str path (:letter offset)))})
+
+(defn get-offsets2
+  [state]
+  (let [hash- (:hash state)]
+        (get-hash-offsets hash-)))
+
+(defn neighbors2
+  [state closed prevs paths]
+  (let [ offsets (get-offsets2 state) 
+        path (get-path paths prevs state)
+        new-states (map #(make-state2 state path %) offsets) ]
+    (filter #(not (contains? closed %)) 
+            (filter #(valid-state? %) new-states))))
+
+(defn check-neighbors2
+  [heuristic open closed nn fscores dists prevs curr goal paths]
+    (if (= 0 (count nn))
+      [open closed fscores dists prevs paths]
+      (let [v (first nn)
+            tentative (+ 1 (get dists curr))
+            dist-v (get-dist dists v Integer/MIN_VALUE)]
+        (if (> tentative dist-v)
+            (let [ new-prevs (assoc prevs v curr)
+                  v-path (get-path paths new-prevs v) 
+                  new-v-dist (+ tentative (heuristic v goal))]
+                 (recur heuristic
+                   (assoc open v new-v-dist)
+                   closed
+                   (rest nn)
+                   (assoc fscores v new-v-dist)
+                   (assoc dists v tentative)
+                   new-prevs
+                   curr
+                   goal
+                   (assoc paths v v-path)))
+          (recur heuristic 
+                 open
+                 closed
+                 (rest nn)
+                 fscores
+                 dists
+                 prevs
+                 curr
+                 goal
+                 paths)))))
+
+
 (defn longest-path
   [heuristic src goal]
+ (let [start-time (System/currentTimeMillis)] 
    (loop [open (priority-map-by > src (heuristic src goal))
           closed #{}
           fscores (priority-map-by > src (heuristic src goal))
           dists (priority-map-by > src 0 goal Integer/MIN_VALUE)
-          prevs {} ]
-     (let [c (count closed)]
-       (if (= 0 (mod c 1000)) (pprint c)))
+          prevs {} 
+          paths {src password} ]
+     (let [
+           elapsed (Math/round (float (- (System/currentTimeMillis) start-time)))]
+       (if (= 0 (mod elapsed 60000)) 
+         (pprint (str 
+                   (count closed) " in closed, " 
+                   (count open) " in open, "
+                   (count paths) " in paths, " 
+                   (/ elapsed 1000) " seconds elapsed")))
      (if (should-terminate? open dists goal)
-       (find-by-pos open goal)
+       prevs
        (let [curr (first (peek open))
-             res (check-neighbors heuristic 
+             res (check-neighbors2 heuristic 
                                   (pop open) 
                                   (conj closed curr) 
-                                  (neighbors curr closed) 
+                                  (neighbors2 curr closed prevs paths) 
                                   fscores 
                                   dists 
                                   prevs
                                   curr
                                   goal
-                                  (fn [a b] (> a b))
-                                  Integer/MIN_VALUE) ]
+                                  paths)]
          (recur (get res 0)
                 (get res 1)
                 (dissoc (get res 2) curr) ; remove curr from fscores
                 (get res 3)
-                (get res 4))))))
+                (get res 4)
+                (dissoc (get res 5) curr))))))))
 
-(def start2 { :pos [0 0] })
+(def start2 { :pos [0 0] :hash (md5 password)})
 
 (defn heuristic1
   [a b]
@@ -245,7 +304,7 @@
 
 (defn solve-longest
   ([start-state]
-   (longest-path heuristic1 start-state goal)))
+   (longest-path heuristic1 start2 goal)))
 
 (defn part-two
   []
