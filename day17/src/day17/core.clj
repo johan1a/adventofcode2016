@@ -85,9 +85,10 @@
 (defn neighbors
   ([state] (neighbors state #{}))
   ([state closed]
+  (if (= (:pos state) (:pos goal)) []
   (let [offsets (get-offsets state)]
     (filter #(not (contains? closed %)) 
-            (filter #(valid-state? %) (map #(make-state state %) offsets))))))
+            (filter #(valid-state? %) (map #(make-state state %) offsets)))))))
 
 (defn letter-diff
   [a b]
@@ -203,10 +204,10 @@
           fscores (priority-map-by > src (heuristic src goal))
           dists (priority-map-by > src 0 goal Integer/MIN_VALUE)
           prevs {} ]
-     (let [c (count closed)]
-       (if (= 0 (mod c 1000)) (pprint c)))
+;     (let [c (count closed)]
+;       (if (= 0 (mod c 1000)) (pprint c)))
      (if (should-terminate? open dists goal)
-       (find-by-pos open goal)
+       closed
        (let [curr (first (peek open))
              res (check-neighbors heuristic 
                                   (pop open) 
@@ -245,7 +246,9 @@
 
 (defn solve-longest
   ([start-state]
-   (longest-path heuristic1 start-state goal)))
+   (let [visited (longest-path heuristic1 start-state goal)
+         goals (filter #(= [3, 3] (:pos %)) visited)]
+     (- (count (first (sort-by count > (map :path goals)))) (count password)))))
 
 (defn part-two
   []
