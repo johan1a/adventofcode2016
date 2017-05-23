@@ -4,4 +4,7 @@
 
 (deftest a-test
   (testing "Test example game"
-    (is (= 3 (:number (play-game (make-gnomes 5)))))))
+    (is (= 3 (play-game (make-gnomes 5))))))
+
+(deftest test-part-one
+  (is (= 1808357 (part-one))))

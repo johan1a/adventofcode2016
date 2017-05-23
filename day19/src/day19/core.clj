@@ -2,7 +2,6 @@
   (:gen-class)
   (:require [clojure.string :as str]))
 
-
 (defn make-gnome
   [k]
    {:number (+ 1 k) :present-count 1})
@@ -15,8 +14,11 @@
 
 (defn make-gnomes
   [n]
-  (let [gnomes (map make-gnome (range n))]
-        (make-nexts gnomes 1 n)))
+  (let [gnomes (map make-gnome (range n))
+        nexts (apply merge (map #(assoc {} (- (:number %) 1)%) gnomes))]
+    (dissoc (assoc nexts n (first gnomes)) 0)))
+
+(def make-gnomes-m (memoize make-gnomes))
 
 (defn delete
   "Delete n2"
@@ -44,7 +46,7 @@
   [nexts g-count prev-n]
   (let [gnome1 (get nexts prev-n)
         gnome2 (get nexts (:number gnome1))
-        new-nexts (take-presents nexts prev-n gnome1 gnome2)]
+        new-nexts (take-presents nexts prev-n gnome1 gnome2) ]
    {:nexts new-nexts :prev-n (:number gnome1)}))
 
 (defn play-game
@@ -52,12 +54,12 @@
   ([state g-count]
    (let [nexts (:nexts state)
          prev-n (:prev-n state)]
-;   (if (= 0 (mod g-count 1000)) (time (pprint (count nexts))))
-  (if (= 1 g-count) 
-    (first (vals nexts))
-     (recur (game-iteration nexts g-count prev-n) (dec g-count))))))
+   (if (= 0 (mod g-count 50000)) (println g-count))
+    (if (= 1 g-count) 
+      (:number (first (vals nexts)))
+       (recur (game-iteration nexts g-count prev-n) (dec g-count))))))
 
 (defn part-one
   []
-  (play-game (make-gnomes 3001330)))
+  (time (play-game (make-gnomes-m 3001330))))
 
