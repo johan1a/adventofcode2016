@@ -3,51 +3,59 @@
   (:require [clojure.string :as str]))
 
 
-(defn new-gnome
+(defn make-gnome
   [k]
-  {:number k :present-count 1})
+   {:number (+ 1 k) :present-count 1})
+
+(defn make-nexts
+  ([gnomes k n] (make-nexts gnomes k n {}))
+  ([gnomes k n nexts]
+    (if (= k n) (assoc nexts k (nth gnomes 0))
+      (recur gnomes (inc k) n (assoc nexts k (nth gnomes k))))))
 
 (defn make-gnomes
   [n]
-  (map new-gnome (range 1 (+ 1 n))))
+  (let [gnomes (map make-gnome (range n))]
+        (make-nexts gnomes 1 n)))
 
-(defn take-from
-  [gnome1 gnome2]
-  (let [number (:number gnome1)
-        present-count (+ (:present-count gnome1) (:present-count gnome2))]
-    {:number number :present-count present-count}))
+(defn delete
+  "Delete n2"
+  [nexts n1 n2]
+  (dissoc (assoc nexts n1 (get nexts n2)) n2))
 
-(defn drop-nth
-  [ll n]
-  (concat (take n ll) 
-          (drop (+ 1 n) ll)))
-
-(defn insert
-  [ll n elem]
-  (lazy-cat (take n ll) 
-            [elem]
-            (drop (+ 1 n) ll)))
-
+(defn update-presents
+  [nexts prev-n n new-count]
+  (let [next- (get nexts n)
+        next-next (get nexts (:number next-))
+        updated-n (assoc nexts prev-n {:number n :present-count new-count})
+        updated-n-next (assoc updated-n n next-next) ]
+    (if (= (:number next-next) n)
+        (dissoc updated-n-next n)
+        (dissoc updated-n-next (:number next-)))))
 
 (defn take-presents
-  [gnomes g-count i]
-  (let [i1 (mod i g-count)
-        i2 (mod (+ 1 i) g-count)
-        gnome1 (nth gnomes i1)
-        gnome2 (nth gnomes i2)
-        new-gnome1 (take-from gnome1 gnome2)
-        new-gnomes1 (insert gnomes i1 new-gnome1)
-        new-gnomes2 (drop-nth new-gnomes1 i2)]
-   new-gnomes2))
+  [nexts prev-n gnome1 gnome2]
+  (let [n (:number gnome1)
+        present-count (+ (:present-count gnome1) (:present-count gnome2))]
+    (update-presents nexts prev-n n present-count)))
+
+(defn game-iteration
+  "take-presents-and-remove-gnome"
+  [nexts g-count prev-n]
+  (let [gnome1 (get nexts prev-n)
+        gnome2 (get nexts (:number gnome1))
+        new-nexts (take-presents nexts prev-n gnome1 gnome2)]
+   {:nexts new-nexts :prev-n (:number gnome1)}))
 
 (defn play-game
-  ([gnomes] (play-game gnomes (count gnomes) 0))
-  ([gnomes g-count i]
-   (if (= 0 (mod g-count 1000)) (time (pprint (count gnomes))))
+  ([nexts] (play-game {:nexts nexts :prev-n (count nexts)} (count nexts)))
+  ([state g-count]
+   (let [nexts (:nexts state)
+         prev-n (:prev-n state)]
+;   (if (= 0 (mod g-count 1000)) (time (pprint (count nexts))))
   (if (= 1 g-count) 
-    (first gnomes)
-    (let [new-index (if (= (- g-count 1) i) 0 (inc i))]
-     (recur (take-presents gnomes g-count i) (dec g-count) new-index )))))
+    (first (vals nexts))
+     (recur (game-iteration nexts g-count prev-n) (dec g-count))))))
 
 (defn part-one
   []
