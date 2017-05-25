@@ -92,25 +92,41 @@
    (let [dist (- (Math/round (Math/floor (/ g-count 2))) 1)]
          (find-target nexts src dist)))
 
+(defn get-before-target
+  [nexts g-count old-before-target]
+  (if (even? g-count) old-before-target
+    (let [target (get nexts (:number old-before-target))
+          after-target (get nexts (:number target))]
+      after-target)))
+
 (defn game-iteration2
   "take-presents-and-remove-gnome"
-  [nexts g-count prev-n]
+  [nexts g-count prev-n before-target]
   (let [stealer (get nexts prev-n)
-        before-target (find-before-target nexts stealer g-count)
-        new-nexts (take-presents2 nexts prev-n stealer before-target) ]
-   {:nexts new-nexts :prev-n (:number stealer)}))
+        new-nexts (take-presents2 nexts prev-n stealer before-target)
+        new-before-target (get-before-target nexts g-count before-target) ]
+   {:nexts new-nexts :prev-n (:number stealer) :before-target new-before-target}))
 
 (defn play-game2
-  ([nexts] (play-game2 {:nexts nexts :prev-n (count nexts)} (count nexts)))
+  ([nexts] (let [g-count (count nexts)
+                 prev-n g-count
+                 src (get nexts prev-n)]
+             (play-game2 {:nexts nexts :prev-n prev-n :before-target (find-before-target nexts src g-count)} g-count)))
   ([state g-count]
    (let [nexts (:nexts state)
-         prev-n (:prev-n state)]
-   (if (= 0 (mod g-count 10)) (println g-count))
+         prev-n (:prev-n state)
+         before-target (:before-target state)]
+   (if (= 0 (mod g-count 50000)) (println g-count))
     (if (= 1 g-count) 
       (:number (first (vals nexts)))
-       (recur (game-iteration2 nexts g-count prev-n) (dec g-count))))))
+       (recur (game-iteration2 nexts g-count prev-n before-target) (dec g-count))))))
 
 (defn part-two
   []
   (play-game2 (make-gnomes-m 3001330)))
+
+(defn test-part-two
+  []
+  (play-game2 (make-gnomes-m 5)))
+
 
