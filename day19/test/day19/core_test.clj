@@ -8,3 +8,8 @@
 
 (deftest test-part-one
   (is (= 1808357 (part-one))))
+
+(deftest test-part-two-example
+  (is (= 2 (play-game2 (make-gnomes-m 5)))))
+
+
