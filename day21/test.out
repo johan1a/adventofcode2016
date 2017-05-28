@@ -1,0 +1,110 @@
+[dbfgaehc] next: undoing swap position 6 with position 1
+[dhfgaebc] next: undoing rotate based on position of letter e
+[gaebcdhf] next: undoing rotate left 7 steps
+[aebcdhfg] next: undoing rotate based on position of letter f
+[aebcdhfg] next: undoing swap letter g with letter c
+[aebgdhfc] next: undoing reverse positions 1 through 2
+[abegdhfc] next: undoing move position 2 to position 4
+[abdeghfc] next: undoing move position 3 to position 1
+[adebghfc] next: undoing swap letter f with letter a
+[fdebghac] next: undoing move position 5 to position 6
+[fdebgahc] next: undoing rotate right 0 steps
+[fdebgahc] next: undoing reverse positions 1 through 2
+[fedbgahc] next: undoing reverse positions 1 through 7
+[fchagbde] next: undoing move position 7 to position 2
+[fcagbdeh] next: undoing swap letter h with letter g
+[fcahbdeg] next: undoing swap letter c with letter f
+[cfahbdeg] next: undoing reverse positions 2 through 6
+[cfedbhag] next: undoing rotate based on position of letter e
+[hagcfedb] next: undoing move position 6 to position 5
+[hagcfdeb] next: undoing move position 4 to position 6
+[hagcefdb] next: undoing swap letter b with letter g
+[habcefdg] next: undoing swap letter a with letter e
+[hebcafdg] next: undoing rotate right 6 steps
+[dghebcaf] next: undoing rotate based on position of letter h
+[cafdgheb] next: undoing rotate based on position of letter g
+[bcafdghe] next: undoing swap position 7 with position 5
+[bcafdehg] next: undoing rotate left 5 steps
+[fdehgbca] next: undoing reverse positions 2 through 3
+[fdhegbca] next: undoing swap letter b with letter a
+[fdhegacb] next: undoing swap letter h with letter a
+[fdaeghcb] next: undoing reverse positions 1 through 3
+[feadghcb] next: undoing swap position 3 with position 0
+[deafghcb] next: undoing swap letter f with letter c
+[deacghfb] next: undoing rotate based on position of letter f
+[deacghfb] next: undoing swap letter a with letter h
+[dehcgafb] next: undoing rotate left 6 steps
+[hcgafbde] next: undoing move position 2 to position 3
+[hcagfbde] next: undoing rotate left 7 steps
+[cagfbdeh] next: undoing rotate left 3 steps
+[dehcagfb] next: undoing reverse positions 4 through 6
+[dehcfgab] next: undoing move position 2 to position 0
+[ehdcfgab] next: undoing move position 7 to position 0
+[hdcfgabe] next: undoing reverse positions 1 through 4
+[hgfcdabe] next: undoing rotate right 7 steps
+[ehgfcdab] next: undoing swap position 4 with position 6
+[ehgfadcb] next: undoing move position 3 to position 2
+[ehfgadcb] next: undoing rotate left 2 steps
+[cbehfgad] next: undoing move position 7 to position 2
+[cbhfgade] next: undoing swap letter a with letter h
+[cbafghde] next: undoing rotate based on position of letter h
+[fghdecba] next: undoing rotate based on position of letter e
+[afghdecb] next: undoing swap letter b with letter e
+[afghdbce] next: undoing swap letter b with letter e
+[afghdecb] next: undoing swap position 1 with position 7
+[abghdecf] next: undoing rotate right 3 steps
+[hdecfabg] next: undoing rotate right 2 steps
+[ecfabghd] next: undoing swap letter h with letter d
+[ecfabgdh] next: undoing swap letter e with letter h
+[hcfabgde] next: undoing swap position 5 with position 4
+[hcfagbde] next: undoing rotate based on position of letter e
+[gbdehcfa] next: undoing rotate left 0 steps
+[gbdehcfa] next: undoing swap letter h with letter a
+[gbdeacfh] next: undoing swap letter f with letter h
+[gbdeachf] next: undoing swap position 4 with position 7
+[gbdefcha] next: undoing swap letter d with letter c
+[gbcefdha] next: undoing reverse positions 0 through 4
+[fecbgdha] next: undoing rotate right 5 steps
+[dhafecbg] next: undoing swap letter f with letter a
+[dhfaecbg] next: undoing rotate based on position of letter a
+[faecbgdh] next: undoing rotate based on position of letter a
+[aecbgdhf] next: undoing move position 2 to position 6
+[aehcbgdf] next: undoing rotate left 6 steps
+[hcbgdfae] next: undoing reverse positions 5 through 6
+[hcbgdafe] next: undoing reverse positions 2 through 7
+[hcefadgb] next: undoing rotate right 2 steps
+[efadgbhc] next: undoing rotate left 1 step
+[cefadgbh] next: undoing rotate based on position of letter f
+[gbhcefad] next: undoing reverse positions 2 through 5
+[gbfechad] next: undoing swap letter g with letter h
+[hbfecgad] next: undoing swap position 6 with position 3
+[hbfacged] next: undoing swap position 1 with position 7
+[hdfacgeb] next: undoing swap position 2 with position 7
+[hdbacgef] next: undoing swap letter a with letter e
+[hdbecgaf] next: undoing swap letter f with letter d
+[hfbecgad] next: undoing swap letter e with letter c
+[hfbcegad] next: undoing swap position 7 with position 5
+[hfbcedag] next: undoing reverse positions 2 through 6
+[hfadecbg] next: undoing rotate left 1 step
+[ghfadecb] next: undoing reverse positions 4 through 7
+[ghfabced] next: undoing reverse positions 3 through 7
+[ghfdecba] next: undoing rotate based on position of letter e
+[aghfdecb] next: undoing reverse positions 1 through 4
+[adfhgecb] next: undoing move position 6 to position 5
+[adfhgceb] next: undoing move position 3 to position 2
+[adhfgceb] next: undoing swap position 6 with position 5
+[adhfgecb] next: undoing rotate left 5 steps
+[fgecbadh] next: undoing reverse positions 0 through 4
+[bcegfadh] next: undoing swap position 1 with position 3
+[bgecfadh] next: undoing swap letter b with letter e
+[egbcfadh] next: undoing rotate right 4 steps
+
+lein test :only day21.core-test/part-two-test
+
+FAIL in (part-two-test) (core_test.clj:7)
+Undo file
+expected: (= part-one-initial (undo-file "dbfgaehc" "input.txt"))
+  actual: (not (= "abcdefgh" "fadhegbc"))
+
+Ran 2 tests containing 2 assertions.
+1 failures, 0 errors.

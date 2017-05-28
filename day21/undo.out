@@ -1,0 +1,101 @@
+
+[dhfgaebc] next: swap position 6 with position 1
+[gaebcdhf] next: rotate based on position of letter e
+[aebcdhfg] next: rotate left 7 steps
+[aebcdhfg] next: rotate based on position of letter f
+[aebgdhfc] next: swap letter g with letter c
+[abegdhfc] next: reverse positions 1 through 2
+[abdeghfc] next: move position 2 to position 4
+[adebghfc] next: move position 3 to position 1
+[fdebghac] next: swap letter f with letter a
+[fdebgahc] next: move position 5 to position 6
+[fdebgahc] next: rotate right 0 steps
+[fedbgahc] next: reverse positions 1 through 2
+[fchagbde] next: reverse positions 1 through 7
+[fcagbdeh] next: move position 7 to position 2
+[fcahbdeg] next: swap letter h with letter g
+[cfahbdeg] next: swap letter c with letter f
+[cfedbhag] next: reverse positions 2 through 6
+[agcfedbh] next: rotate based on position of letter e
+[agcfebdh] next: move position 6 to position 5
+[agcfdebh] next: move position 4 to position 6
+[abcfdegh] next: swap letter b with letter g
+[ebcfdagh] next: swap letter a with letter e
+[ghebcfda] next: rotate right 6 steps
+[hebcfdag] next: rotate based on position of letter h
+[fdaghebc] next: rotate based on position of letter g
+[fdaghcbe] next: swap position 7 with position 5
+[ghcbefda] next: rotate left 5 steps
+[ghbcefda] next: reverse positions 2 through 3
+[ghacefdb] next: swap letter b with letter a
+[gahcefdb] next: swap letter h with letter a
+[gchaefdb] next: reverse positions 1 through 3
+[achgefdb] next: swap position 3 with position 0
+[afhgecdb] next: swap letter f with letter c
+[fhgecdba] next: rotate based on position of letter f
+[fagecdbh] next: swap letter a with letter h
+[gecdbhfa] next: rotate left 6 steps
+[gedcbhfa] next: move position 2 to position 3
+[edcbhfag] next: rotate left 7 steps
+[fagedcbh] next: rotate left 3 steps
+[fagebcdh] next: reverse positions 4 through 6
+[agfebcdh] next: move position 2 to position 0
+[gfebcdha] next: move position 7 to position 0
+[gcbefdha] next: reverse positions 1 through 4
+[agcbefdh] next: rotate right 7 steps
+[agcbdfeh] next: swap position 4 with position 6
+[agbcdfeh] next: move position 3 to position 2
+[ehagbcdf] next: rotate left 2 steps
+[ehgbcdfa] next: move position 7 to position 2
+[eagbcdfh] next: swap letter a with letter h
+[cdfheagb] next: rotate based on position of letter h
+[bcdfheag] next: rotate based on position of letter e
+[ecdfhbag] next: swap letter b with letter e
+[bcdfheag] next: swap letter b with letter e
+[bgdfheac] next: swap position 1 with position 7
+[fheacbgd] next: rotate right 3 steps
+[eacbgdfh] next: rotate right 2 steps
+[eacbghfd] next: swap letter h with letter d
+[hacbgefd] next: swap letter e with letter h
+[hacbegfd] next: swap position 5 with position 4
+[dhacbegf] next: rotate based on position of letter e
+[dhacbegf] next: rotate left 0 steps
+[dahcbegf] next: swap letter h with letter a
+[dafcbegh] next: swap letter f with letter h
+[dafchegb] next: swap position 4 with position 7
+[cafdhegb] next: swap letter d with letter c
+[hdfacegb] next: reverse positions 0 through 4
+[egbhdfac] next: rotate right 5 steps
+[egbhdafc] next: swap letter f with letter a
+[hdafcegb] next: rotate based on position of letter a
+[gbhdafce] next: rotate based on position of letter a
+[gbchdafe] next: move position 2 to position 6
+[chdafegb] next: rotate left 6 steps
+[chdafgeb] next: reverse positions 5 through 6
+[chbegfad] next: reverse positions 2 through 7
+[begfadch] next: rotate right 2 steps
+[hbegfadc] next: rotate left 1 step
+[chbegfad] next: rotate based on position of letter f
+[chfgebad] next: reverse positions 2 through 5
+[cgfhebad] next: swap letter g with letter h
+[cgfaebhd] next: swap position 6 with position 3
+[cdfaebhg] next: swap position 1 with position 7
+[cdgaebhf] next: swap position 2 with position 7
+[cdgeabhf] next: swap letter a with letter e
+[cfgeabhd] next: swap letter f with letter d
+[efgcabhd] next: swap letter e with letter c
+[efgcadhb] next: swap position 7 with position 5
+[efhdacgb] next: reverse positions 2 through 6
+[befhdacg] next: rotate left 1 step
+[befhgcad] next: reverse positions 4 through 7
+[befdacgh] next: reverse positions 3 through 7
+[efdacghb] next: rotate based on position of letter e
+[ecadfghb] next: reverse positions 1 through 4
+[ecadfhgb] next: move position 6 to position 5
+[ecdafhgb] next: move position 3 to position 2
+[ecdafghb] next: swap position 6 with position 5
+[afghbecd] next: rotate left 5 steps
+[bhgfaecd] next: reverse positions 0 through 4
+[bfghaecd] next: swap position 1 with position 3
+[efghabcd] next: swap letter b with letter e
+[abcdefgh] next: rotate right 4 steps
