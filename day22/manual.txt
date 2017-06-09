@@ -1,0 +1,11 @@
+8 left
+23 up
+32 right (open space is to the left of G)
+37 times:
+  1 right
+  1 down
+  2 left 
+  1 up
+1 right
+
+8 + 23 + 32 + 37 * (1 + 1 + 2 + 1) + 1
