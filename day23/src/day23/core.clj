@@ -185,17 +185,12 @@
 
 (defn exec-cmds
   [state] 
-;  (if (or (= 17 (:pc state)) 
-;          (= 10 (:pc state)))
-;    (pprint state))
    (if 
        (>= (:pc state) (count (:cmds state)))
        state
        (let [pc (:pc state)
              cmd (nth (:cmds state) (:pc state))
-             executed (exec-cmd cmd state)
-;             ff (println (str (:regs state) " " (:pc state) " " cmd))
-             ]
+             executed (exec-cmd cmd state)]
        (recur executed))))
 
 (defn exec-program
