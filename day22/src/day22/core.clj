@@ -3,7 +3,6 @@
   (:require [clojure.string :as str]
             [clojure.data.priority-map :refer :all]))
 
-
 (defn parse-num
   [t-num]
   (Integer/parseInt (subs t-num 0 (- (count t-num) 1))))
@@ -19,7 +18,6 @@
         avail (parse-num (nth splitted 3))
         use- (parse-num (nth splitted 4))]
     {:pos [x y] :size size :used used :avail avail :use% use-}))
-
 
 (defn get-input
   [file-name]
@@ -214,7 +212,7 @@
         all-nodes (doall (vals (:node-map state)))
         nodes-to-check (doall (map #(get (:node-map state) %) pos-to-check))
         new-possible (doall (possible-moves all-nodes nodes-to-check (:possible-moves state) (get-now) ))
-           ss (pprint "----------_")
+        ss (pprint "----------_")
         ;x (pprint (- (get-now) start))
         ]
     (assoc state :possible-moves new-possible)))
