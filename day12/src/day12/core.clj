@@ -87,16 +87,12 @@
 
 (defn exec-cmds
   [state] 
-;  (pprint state)
    (if (>= (:pc state) (count (:cmds state)))
        state
        (let [pc (:pc state)
              cmd (nth (:cmds state) (:pc state))
-;             p (println (:regs state))
-;             sd (pprint (str "next line: " cmd))
              executed (exec-cmd cmd state)
              ff (println (str (:regs state) " " cmd))
-;             f (read-line)
              ]
        (recur executed))))
 
