@@ -11,28 +11,25 @@
   [line]
   (let [jnz  (re-find #"jnz (\w+) (-?\w+)" line)
         cpy  (re-find #"cpy (-?\w+) (\w+)" line)
+        mul  (re-find #"mul (\w+) (\w+)" line)
         dec1 (re-find #"dec (-?\w+)" line)
         tgl  (re-find #"tgl (\w+)" line)
-        inc1 (re-find #"inc (\w+)" line)]
+        inc1 (re-find #"inc (\w+)" line)
+        noop (re-find #"noop" line)
+        ]
     (cond
       (= 3 (count jnz))      { :cmd "jnz" :a (get jnz 1) :b (get jnz 2)}
       (= 3 (count cpy))      { :cmd "cpy" :a (get cpy 1) :b (get cpy 2)}
+      (= 3 (count mul))      { :cmd "mul" :a (get mul 1) :b (get mul 2)}
       (= 2 (count dec1))     { :cmd "dec" :a (get dec1 1)}
       (= 2 (count tgl))      { :cmd "tgl" :a (get tgl 1)}
       (= 2 (count inc1))     { :cmd "inc" :a (get inc1 1)}
+      (= 4 (count noop))     { :cmd "noop"}
       :else                  { :cmd "error" :a line})))
 
 (defn parse-lines
   [file]
   (map parse-line (get-lines file)))
-
-(defn test-initial 
-  [file]
-  {:cmds (parse-lines file) :pc 0 :regs {"a" 0 "b" 0 "c" 0 "d" 0}})
-
-(defn initial 
-  [file]
-  {:cmds (parse-lines file) :pc 0 :regs {"a" 7 "b" 0 "c" 0 "d" 0}})
 
 (defn valid-register?
   [x]
@@ -132,6 +129,16 @@
           (copy-num (Integer/parseInt a) b state))
         (inc-pc state))))
 
+(defn exec-mul
+  "mul a and b and store the result in a"
+  [cmd state]
+  (let [a-reg (:a cmd)
+        a-val (regval-or-num state a-reg)
+        b (regval-or-num state (:b cmd))
+        result (* a-val b)
+        new-regs (assoc (:regs state) a-reg result)]
+    (assoc state :regs new-regs :pc (+ 1 (:pc state)))))
+
 (defn exec-inc
   [cmd state]
     (if (not (valid-register? (:a cmd))) 
@@ -158,11 +165,17 @@
             (toggle-cmd a state)
             (inc-pc state)))))
 
+(defn exec-noop
+  [cmd state]
+  (inc-pc state))
+
 (def funcs {"cpy" "exec-copy" 
             "jnz" "exec-jnz" 
             "inc" "exec-inc" 
             "dec" "exec-dec"
-            "tgl" "exec-tgl"})
+            "tgl" "exec-tgl"
+            "noop" "exec-noop"
+            "mul" "exec-mul"})
  
 (defn exec-cmd
   [cmd state]
@@ -172,6 +185,9 @@
 
 (defn exec-cmds
   [state] 
+;  (if (or (= 17 (:pc state)) 
+;          (= 10 (:pc state)))
+;    (pprint state))
    (if 
        (>= (:pc state) (count (:cmds state)))
        state
@@ -186,11 +202,40 @@
   [state]
   (exec-cmds state))
 
+(defn test-initial 
+  [file]
+  {:cmds (parse-lines file) :pc 0 :regs {"a" 0 "b" 0 "c" 0 "d" 0}})
+
+(defn initial 
+  [file]
+  {:cmds (parse-lines file) :pc 0 :regs {"a" 7 "b" 0 "c" 0 "d" 0}})
+
+(defn initial-part2
+  [file]
+  {:cmds (parse-lines file) :pc 0 :regs {"a" 12 "b" 0 "c" 0 "d" 0}})
+
 (defn test-part1
   []
   (exec-cmds (test-initial "test-input.txt")))
 
+(defn run-part1
+  []
+  (exec-cmds (initial "input.txt")))
+
 (defn part1
   []
-  (get (:regs (exec-cmds (initial "input.txt"))) "a"))
+  (get (:regs (run-part1)) "a"))
+
+(defn test-part2
+  []
+  (exec-cmds (initial "input2.txt")))
+
+(defn run-part2
+  []
+  (exec-cmds (initial-part2 "input2.txt")))
+
+(defn part2
+  []
+  (get (:regs (run-part2)) "a"))
+
 
