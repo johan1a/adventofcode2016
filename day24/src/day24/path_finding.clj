@@ -43,12 +43,14 @@
 (defn free?
   [matrix pos]
   (let [x (first pos)
-        y (second pos)]
-    (= "." (nth (nth matrix x) y))))
+        y (second pos)
+        ch (nth (nth matrix x) y)]
+    (not (= "#" ch))))
 
-(defn neighbors
-  [pos matrix]
-   (filter #(free? matrix %) (filter #(in-matrix? matrix %) (map #(add-states pos %) neigh-offsets))))
+(defn get-neighbors
+  [matrix closed pos]
+  (let [neighbors (filter #(free? matrix %) (filter #(in-matrix? matrix %) (map #(add-states pos %) neigh-offsets)))]
+    (filter #(not (contains? closed %)) neighbors)))
 
 (defn get-dist
   [dists k default]
@@ -83,7 +85,8 @@
                    comp-func
                    default-dist)
           (recur heuristic
-                 open closed
+                 open
+                 closed
                  (rest nn)
                  fscores
                  dists
@@ -106,7 +109,7 @@
              res (check-neighbors heuristic
                                   (pop open)
                                   (conj closed curr)
-                                  (neighbors curr matrix)
+                                  (get-neighbors matrix closed curr)
                                   fscores
                                   dists
                                   prevs
@@ -155,6 +158,7 @@
   (read-input file-name))
 
 (def input1 (read-input "input.txt"))
+(def tinput (read-input "test-input.txt"))
 
 (def str-numbers (map str (range 0 8)))
 
