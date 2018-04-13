@@ -11,14 +11,14 @@
 (def start-state [0 0])
 
 (def neigh-offsets
-  [-1 -1
-   -1  0
-   -1  1
-   0  -1
-   0   1
-   1  -1
-   1   0
-   1   1])
+  [[-1 -1]
+   [-1  0],
+   [-1  1],
+   [0  -1],
+   [0   1],
+   [1  -1],
+   [1   0],
+   [1   1]])
 
 (defn add-states
   [a b]
@@ -31,10 +31,10 @@
         maxi (count matrix)
         maxj (count (first matrix))]
     (and
-      (i >= 0)
-      (j >= 0)
-      (i < maxi)
-      (j - maxj))))
+      (>= i 0)
+      (>= j 0)
+      (< i maxi)
+      (- j maxj))))
 
 (defn free?
   [matrix pos]
@@ -42,10 +42,9 @@
         y (second pos)]
     (= "." (nth (nth matrix x) y))))
 
-
 (defn neighbors
-  ([pos matrix]
-   (filter in-matrix? matrix (map add-states neigh-offsets pos))))
+  [pos matrix]
+   (filter #(free? matrix %) (filter #(in-matrix? matrix %) (map #(add-states pos %) neigh-offsets))))
 
 (defn get-dist
   [dists k default]
