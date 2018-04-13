@@ -10,7 +10,7 @@
 
 (def start-state [0 0])
 
-(def neigh-matrix
+(def neigh-offsets
   [-1 -1
    -1  0
    -1  1
@@ -25,23 +25,27 @@
   (map + a b))
 
 (defn in-matrix?
-  [neigh-matrix x]
+  [matrix x]
   (let [i (first x)
         j (second x)
-        maxi (count neigh-matrix)
-        maxj (count (first neigh-matrix))]
+        maxi (count matrix)
+        maxj (count (first matrix))]
     (and
       (i >= 0)
       (j >= 0)
       (i < maxi)
       (j - maxj))))
 
-(defn neighbors
-  ([state neigh-matrix]
-   (let [neigh-poses (filter in-matrix? neigh-matrix (map add-states state "neigh-poses"))
+(defn free?
+  [matrix pos]
+  (let [x (first pos)
+        y (second pos)]
+    (= "." (nth (nth matrix x) y))))
 
-         ]
-   "todo")))
+
+(defn neighbors
+  ([pos matrix]
+   (filter in-matrix? matrix (map add-states neigh-offsets pos))))
 
 (defn get-dist
   [dists k default]
@@ -131,6 +135,10 @@
 
 (defn solve
   []
+  (subs (:path (shortest-path heuristic1 start-state nil)) (count (:path start-state))))
+
+(defn distance-between
+  [input start goal]
   (subs (:path (shortest-path heuristic1 start-state nil)) (count (:path start-state))))
 
 (def start "TODO")
