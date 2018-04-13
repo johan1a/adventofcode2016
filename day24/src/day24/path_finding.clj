@@ -24,6 +24,10 @@
   [a b]
   (map + a b))
 
+(defn sub-states
+  [a b]
+  (map - a b))
+
 (defn in-matrix?
   [matrix x]
   (let [i (first x)
@@ -90,7 +94,7 @@
                  default-dist)))))
 
 (defn shortest-path
-  [heuristic src goal neigh-matrix]
+  [heuristic src goal matrix]
    (loop [open (priority-map src (heuristic src goal))
           closed #{}
           fscores (priority-map src (heuristic src goal))
@@ -102,7 +106,7 @@
              res (check-neighbors heuristic
                                   (pop open)
                                   (conj closed curr)
-                                  (neighbors curr neigh-matrix)
+                                  (neighbors curr matrix)
                                   fscores
                                   dists
                                   prevs
@@ -130,7 +134,7 @@
 
 (defn heuristic1
   [a b]
-  (reduce + (map abs ( b a))))
+  (reduce + (map abs (sub-states b a))))
 
 (defn solve
   []
