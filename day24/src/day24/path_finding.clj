@@ -10,7 +10,7 @@
 
 (def start-state [0 0])
 
-(defn neigh-matrix
+(def neigh-matrix
   [-1 -1
    -1  0
    -1  1
@@ -38,10 +38,10 @@
 
 (defn neighbors
   ([state neigh-matrix]
-   (let [neigh-poses (filter in-matrix? neigh-matrix (map add-states state neigh-poses))
+   (let [neigh-poses (filter in-matrix? neigh-matrix (map add-states state "neigh-poses"))
 
          ]
-   "todo"))
+   "todo")))
 
 (defn get-dist
   [dists k default]
@@ -143,4 +143,28 @@
   [file-name]
   (read-input file-name))
 
-(read-input "input.txt")
+(def input1 (read-input "input.txt"))
+
+(def str-numbers (map str (range 0 8)))
+
+; Find the position of the numbers in the given input matrix
+(defn get-targets
+  [input]
+  (map #(find-in-matrix input %) str-numbers))
+
+(defn find-in-matrix
+  [input nbr]
+  (let [find-results (map #(find-in-array % nbr) input)]
+    (find-nonzero find-results)))
+
+(defn find-nonzero
+ ([array] (find-nonzero array 0))
+ ([array acc]
+  (if (= (count array) 0) -1
+    (if (>= (first array) 0)
+      [acc (first array)]
+      (find-nonzero (rest array) (+ acc 1))))))
+
+(defn find-in-array
+  [array nbr]
+  (.indexOf array nbr))
