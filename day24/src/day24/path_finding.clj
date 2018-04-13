@@ -172,21 +172,23 @@
   [input start goal]
   (get (shortest-path heuristic1 start goal input) goal))
 
-(defn solve
-  [input n]
-  (let [all-poses (get-targets input n)
-        start (first all-poses)
-        targets (rest all-poses)]
-    (distance-between input start (first targets))))
-
 (defn update-dists-map
   [dists-map start targets dists]
   (let [mapped-dists (zipmap targets dists)]
     (assoc dists-map start mapped-dists)))
 
-(defn get-dists
-  ([input start targets] (get-dists input start targets {}))
+(defn get-all-dists
+  "Calculates every distance between the points"
+  ([input start targets] (get-all-dists input start targets {}))
   ([input start targets dists-map]
+   (if (empty? targets) dists-map
    (let [dists (map #(distance-between input start %) targets)
          new-dists-map (update-dists-map dists-map start targets dists)]
-    (recur input (first targets) (rest targets) new-dists-map))))
+    (recur input (first targets) (rest targets) new-dists-map)))))
+
+(defn solve
+  [input n]
+  (let [positions (get-targets input n)
+        start (first positions)
+        targets (rest positions)]
+    (get-all-dists input start targets)))
