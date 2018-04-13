@@ -135,14 +135,6 @@
   [a b]
   (reduce + (map abs (sub-states b a))))
 
-(defn solve
-  []
-  (subs (:path (shortest-path heuristic1 start-state nil)) (count (:path start-state))))
-
-(defn distance-between
-  [input start goal]
-  (get (shortest-path heuristic1 start goal input) goal))
-
 (defn find-distances
   [file-name]
   (read-input file-name))
@@ -171,6 +163,30 @@
     (find-nonzero find-results)))
 
 ; Find the position of the numbers in the given input matrix
+; n is the amount of numbers
 (defn get-targets
   [input n]
   (map #(find-in-matrix input %) (str-numbers n)))
+
+(defn distance-between
+  [input start goal]
+  (get (shortest-path heuristic1 start goal input) goal))
+
+(defn solve
+  [input n]
+  (let [all-poses (get-targets input n)
+        start (first all-poses)
+        targets (rest all-poses)]
+    (distance-between input start (first targets))))
+
+(defn update-dists-map
+  [dists-map start targets dists]
+  (let [mapped-dists (zipmap targets dists)]
+    (assoc dists-map start mapped-dists)))
+
+(defn get-dists
+  ([input start targets] (get-dists input start targets {}))
+  ([input start targets dists-map]
+   (let [dists (map #(distance-between input start %) targets)
+         new-dists-map (update-dists-map dists-map start targets dists)]
+    (recur input (first targets) (rest targets) new-dists-map))))
