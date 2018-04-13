@@ -170,21 +170,31 @@
 
 (defn distance-between
   [input start goal]
+  (shortest-path heuristic1 start goal input))
+
+(defn simple-distance-between
+  [input start goal]
   (get (shortest-path heuristic1 start goal input) goal))
 
-(defn update-dists-map
-  [dists-map start targets dists]
-  (let [mapped-dists (zipmap targets dists)]
-    (assoc dists-map start mapped-dists)))
+(defn list-contains
+  [ll x]
+  (some #(= x %) ll))
+
+(defn filter-dists-map
+  "remove distance to non-targets and start to itself"
+  [dists-map start targets]
+  (let [without-start (dissoc dists-map start)]
+        (filter #(not (list-contains targets (first %))) without-start)))
 
 (defn get-all-dists
   "Calculates every distance between the points"
   ([input start targets] (get-all-dists input start targets {}))
-  ([input start targets dists-map]
-   (if (empty? targets) dists-map
-   (let [dists (map #(distance-between input start %) targets)
-         new-dists-map (update-dists-map dists-map start targets dists)]
-    (recur input (first targets) (rest targets) new-dists-map)))))
+  ([input start targets all-dists-map]
+   (if (empty? targets) all-dists-map
+   (let [dists-map (map #(distance-between input start %) targets)
+         start-dists-map (filter-dists-map dists-map start targets)
+         new-all-dists-map (assoc all-dists-map start start-dists-map)]
+    (recur input (first targets) (rest targets) new-all-dists-map)))))
 
 (defn solve
   [input n]
