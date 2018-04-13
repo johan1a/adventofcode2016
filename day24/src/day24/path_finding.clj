@@ -11,14 +11,10 @@
 (def start-state [0 0])
 
 (def neigh-offsets
-  [[-1 -1]
-   [-1  0],
-   [-1  1],
+  [[-1  0],
    [0  -1],
    [0   1],
-   [1  -1],
-   [1   0],
-   [1   1]])
+   [0  -1]])
 
 (defn add-states
   [a b]
@@ -145,13 +141,7 @@
 
 (defn distance-between
   [input start goal]
-  (subs (:path (shortest-path heuristic1 start-state nil)) (count (:path start-state))))
-
-(def start "TODO")
-
-(defn part-one
-  []
-  (solve start))
+  (get (shortest-path heuristic1 start goal input) goal))
 
 (defn find-distances
   [file-name]
@@ -162,15 +152,9 @@
 
 (def str-numbers (map str (range 0 8)))
 
-; Find the position of the numbers in the given input matrix
-(defn get-targets
-  [input]
-  (map #(find-in-matrix input %) str-numbers))
-
-(defn find-in-matrix
-  [input nbr]
-  (let [find-results (map #(find-in-array % nbr) input)]
-    (find-nonzero find-results)))
+(defn find-in-array
+  [array nbr]
+  (.indexOf array nbr))
 
 (defn find-nonzero
  ([array] (find-nonzero array 0))
@@ -180,6 +164,12 @@
       [acc (first array)]
       (find-nonzero (rest array) (+ acc 1))))))
 
-(defn find-in-array
-  [array nbr]
-  (.indexOf array nbr))
+(defn find-in-matrix
+  [input nbr]
+  (let [find-results (map #(find-in-array % nbr) input)]
+    (find-nonzero find-results)))
+
+; Find the position of the numbers in the given input matrix
+(defn get-targets
+  [input]
+  (map #(find-in-matrix input %) str-numbers))
