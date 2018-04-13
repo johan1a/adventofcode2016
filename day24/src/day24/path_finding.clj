@@ -150,7 +150,8 @@
 (def input1 (read-input "input.txt"))
 (def tinput (read-input "test-input.txt"))
 
-(def str-numbers (map str (range 0 8)))
+(defn str-numbers
+ [n] (map str (range 0 n)))
 
 (defn find-in-array
   [array nbr]
@@ -171,5 +172,5 @@
 
 ; Find the position of the numbers in the given input matrix
 (defn get-targets
-  [input]
-  (map #(find-in-matrix input %) str-numbers))
+  [input n]
+  (map #(find-in-matrix input %) (str-numbers n)))
