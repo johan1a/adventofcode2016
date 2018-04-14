@@ -74,7 +74,7 @@
 
 (defn combinations
   [dd n]
-  (if (< (count dd) n) 
+  (if (< (count dd) n)
     '()
   (combo/combinations dd n)))
 

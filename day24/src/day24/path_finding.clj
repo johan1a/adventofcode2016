@@ -139,9 +139,6 @@
   [file-name]
   (read-input file-name))
 
-(def input1 (read-input "input.txt"))
-(def tinput (read-input "test-input.txt"))
-
 (defn str-numbers
  [n] (map str (range 0 n)))
 
@@ -197,9 +194,24 @@
          new-all-dists-map (assoc all-dists-map start dists-map)]
     (recur input (inc start-i) targets new-all-dists-map)))))
 
-(defn solve
-  [input n]
-  (let [positions (get-targets input n)
-        start (first positions)
-        targets (rest positions)]
-    (get-all-dists input start targets)))
+(def input1 (read-input "input.txt"))
+(def tinput (read-input "test-input.txt"))
+
+(defn get-part1-targets
+  []
+  (get-targets input1 8))
+
+(defn get-part1-dists
+  []
+  (get-all-dists input1 0 (get-part1-targets)))
+
+(defn get-test-targets
+  []
+  (get-targets tinput 5))
+
+(defn get-test-dists
+  []
+  (get-all-dists tinput 0 (get-test-targets)))
+
+
+
