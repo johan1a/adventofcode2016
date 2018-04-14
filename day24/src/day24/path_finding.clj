@@ -184,17 +184,18 @@
   "remove distance to non-targets and start to itself"
   [dists-map start targets]
   (let [without-start (dissoc dists-map start)]
-        (filter #(not (list-contains targets (first %))) without-start)))
+        (filter #(list-contains targets (first %))) without-start))
 
 (defn get-all-dists
   "Calculates every distance between the points"
-  ([input start targets] (get-all-dists input start targets {}))
-  ([input start targets all-dists-map]
-   (if (empty? targets) all-dists-map
-   (let [dists-map (map #(distance-between input start %) targets)
-         start-dists-map (filter-dists-map dists-map start targets)
-         new-all-dists-map (assoc all-dists-map start start-dists-map)]
-    (recur input (first targets) (rest targets) new-all-dists-map)))))
+  ([input start-i targets] (get-all-dists input start-i targets {}))
+  ([input start-i targets all-dists-map]
+   (if (= (count targets) start-i) all-dists-map
+   (let [start (nth targets start-i)
+         others (remove #(= start %) targets)
+         dists-map (distance-between input start (first others))
+         new-all-dists-map (assoc all-dists-map start dists-map)]
+    (recur input (inc start-i) targets new-all-dists-map)))))
 
 (defn solve
   [input n]
