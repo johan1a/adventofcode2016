@@ -24,28 +24,38 @@
            next-dist (get-dist dists start next-pos)]
      (recur dists (rest path) (+ total next-dist))))))
 
-(defn get-path
+(defn get-path1
   [dists start others]
   (let [path (concat [start] others)
         dist (calc-distance dists path)]
     {:dist dist :path path}))
 
+(defn get-path2
+  [dists start others]
+  (let [path (concat (concat [start] others) [start])
+        dist (calc-distance dists path)]
+    {:dist dist :path path}))
+
 (defn all-possible-paths
-  [dists targets]
+  [dists targets get-path-func]
   (let [start (first targets)
         others (rest targets)
         permutations (all-permutations others)
-        all-paths (map #(get-path dists start %) permutations)]
+        all-paths (map #(get-path-func dists start %) permutations)]
     all-paths))
 
 (defn solve
-  [dists targets]
-  (let [all-paths (all-possible-paths dists targets)]
+  [dists targets get-path-func]
+  (let [all-paths (all-possible-paths dists targets get-path-func)]
     (apply min (map :dist all-paths))))
 
 (defn part-one
   []
-  (solve (pf/get-part1-dists) (pf/get-part1-targets)))
+  (solve (pf/get-part1-dists) (pf/get-part1-targets) get-path1))
+
+(defn part-two
+  []
+  (solve (pf/get-part1-dists) (pf/get-part1-targets) get-path2))
 
 (defn test-solve
   []
